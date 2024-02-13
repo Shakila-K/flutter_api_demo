@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dio/internet_services/paths.dart';
 import 'package:flutter_dio/model/user.dart';
-import 'package:flutter_dio/screens/add_user.dart';
 
 class EditUser extends StatefulWidget {
   final User user;
@@ -32,6 +31,7 @@ class _EditUserState extends State<EditUser> {
       var response = await Dio().put('$baseUrl/update', data: user.toJson());
       if(response.statusCode == 200){
         print('User updated');
+        closePage();
       }
       else{
         throw response.statusMessage.toString();
@@ -46,6 +46,7 @@ class _EditUserState extends State<EditUser> {
       var response = await Dio().delete('$baseUrl/remove/${user.id}');
       if(response.statusCode == 200){
         print('User deleted');
+        closePage();
       }
       else{
         throw response.statusMessage.toString();
@@ -53,6 +54,10 @@ class _EditUserState extends State<EditUser> {
     }catch (e){
       print(e);
     }
+  }
+
+  void closePage(){
+    Navigator.pop(context);
   }
 
   @override
@@ -107,7 +112,6 @@ class _EditUserState extends State<EditUser> {
                     ElevatedButton(
                       onPressed: (){
                         deleteUser();
-                        Navigator.pop(context);
                       },
                       child: const Text('Delete'),
                     ),

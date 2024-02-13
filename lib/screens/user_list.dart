@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -52,6 +51,22 @@ class _UserListState extends State<UserList> {
     print('back from add user');
   }
 
+  void deleteUser (User user) async{
+    try{
+      print ('deleting user');
+      var response = await Dio().delete('$baseUrl/remove/${user.id}');
+      if(response.statusCode == 200){
+        print('User deleted');
+        getUsers();
+      }
+      else{
+        throw response.statusMessage.toString();
+      }
+    }catch(e){
+      print(e);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -71,12 +86,18 @@ class _UserListState extends State<UserList> {
               const Spacer(),
               IconButton(
                 onPressed: (){
-                  goToAddUser();
-                  getUsers();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const AddUser()
+                    ),
+                  ).then((value) {
+                    setState(() {
+                      getUsers();
+                    });
+                  });
                 },
                 icon: const Icon(Icons.person_add_alt),
               ),
-              IconButton(onPressed: getUsers, icon: Icon(Icons.refresh))
             ],
           ),
         ),
@@ -104,8 +125,20 @@ class _UserListState extends State<UserList> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => EditUser(user: users[index])),
-                      );
-                    }, icon: const Icon(Icons.edit)),
+                        ).then((value) {
+                          setState(() {
+                            getUsers();
+                          });
+                        });
+                      }, 
+                      icon: const Icon(Icons.edit)
+                    ),
+                    IconButton(onPressed: (){
+                      deleteUser(users[index]);
+                      }, 
+                      icon: const Icon(Icons.delete)
+                    ),
+                    
                   ],
                 ),
               ),

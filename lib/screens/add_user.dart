@@ -21,8 +21,9 @@ class _AddUserState extends State<AddUser> {
   void addUser() async {
     try{
       var response = await Dio().post('$baseUrl/new', data: newUser.toJson());
-      if(response.statusCode == 200){
+      if(response.statusCode == 201){
         print('User added');
+        // goToUserList();
       }
       else{
         throw response.statusMessage.toString();
@@ -32,6 +33,10 @@ class _AddUserState extends State<AddUser> {
     }
 
   }
+
+  // void goToUserList(){
+  //   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => UserList()), (route) => false);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -70,8 +75,8 @@ class _AddUserState extends State<AddUser> {
                     newUser.name = _nameController.text;
                     newUser.age = int.parse(_ageController.text);
                     addUser();
-                    Navigator.pop(context, true);
                   });
+                  Navigator.pop(context);
                 },
                 child: const Text('Add User'),
               ),
